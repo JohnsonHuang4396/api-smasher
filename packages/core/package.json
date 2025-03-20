@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "test": "vitest -u",
+    "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
