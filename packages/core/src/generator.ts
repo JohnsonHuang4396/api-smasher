@@ -1,26 +1,18 @@
-import type { SwaggerResponse } from './types'
+import type { SwaggerPathDefinition, SwaggerResponse } from './types'
 import { appendFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { cwd } from 'node:process'
 import { normalize, resolve } from 'pathe'
 
-interface GeneratorOptions {
+export interface GeneratorOptions {
   outputDir: string
   pathDetails: {
     method: string
     path: string
+    raw: SwaggerPathDefinition
     operationId?: string
+    summary?: string
   }[]
   responses: SwaggerResponse[]
-}
-
-function generateFiles(outputDir: string, path: string, content: string): void {
-  if (existsSync(path)) {
-    appendFileSync(path, `\n${content}`)
-  }
-  else {
-    mkdirSync(outputDir, { recursive: true })
-    writeFileSync(path, content)
-  }
 }
 
 export function generateApiFiles({ outputDir, pathDetails, responses }: GeneratorOptions): void {
@@ -35,6 +27,16 @@ export function generateApiFiles({ outputDir, pathDetails, responses }: Generato
   // 生成 Model 文件
   const modelContent = generateModelContent(responses)
   generateFiles(outputDir, modelPath, modelContent)
+}
+
+function generateFiles(outputDir: string, path: string, content: string): void {
+  if (existsSync(path)) {
+    appendFileSync(path, `\n${content}`)
+  }
+  else {
+    mkdirSync(outputDir, { recursive: true })
+    writeFileSync(path, content)
+  }
 }
 
 function generateApiContent(pathDetails: GeneratorOptions['pathDetails']): string {

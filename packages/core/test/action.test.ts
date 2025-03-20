@@ -17,8 +17,8 @@ describe('generateApi', () => {
     }
 
     const selectedPaths = [
-      'POST:/wechatContentMsg/getWechatAssessmentByEmployee',
-      'POST:/wechatContentMsg/getWechatAssessmentByClient'
+      '/wechatContentMsg/getWechatAssessmentByEmployee',
+      '/wechatContentMsg/getWechatAssessmentByClient'
     ]
 
     await generateApi({

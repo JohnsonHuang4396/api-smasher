@@ -1,3 +1,4 @@
+import type { GeneratorOptions } from './generator'
 import type { SwaggerConfig, SwaggerResponse } from './types'
 import { DEFAULT_OUTPUT_DIR } from './config'
 import { fetchSwaggerDocs } from './fetch-api'
@@ -52,7 +53,7 @@ export async function generateApi({
       outputDir,
       selectedPaths: validPaths,
       pathDetails: availablePaths.filter(info =>
-        validPaths.includes(`${info.method}:${info.path}`)
+        validPaths.includes(info.path)
       )
     })
   }
@@ -66,12 +67,7 @@ export async function generateApi({
 interface ProcessResult {
   outputDir: string
   selectedPaths: string[]
-  pathDetails: Array<{
-    method: string
-    path: string
-    summary?: string
-    operationId?: string
-  }>
+  pathDetails: GeneratorOptions['pathDetails']
 }
 
 async function processApiGeneration(
@@ -92,14 +88,15 @@ async function processApiGeneration(
   }
 }
 
-function extractAvailablePaths(responses: SwaggerResponse[]): Array<{ method: string, path: string }> {
+function extractAvailablePaths(responses: SwaggerResponse[]): Array<ProcessResult['pathDetails'][number]> {
   return responses.flatMap(response =>
     Object.entries(response.paths || {}).flatMap(([path, methods]) =>
       Object.entries(methods as Record<string, any>).map(([method, info]) => ({
         method: method.toUpperCase(),
         path,
         summary: info.summary,
-        operationId: info.operationId
+        operationId: info.operationId,
+        raw: info
       }))
     )
   )
@@ -110,7 +107,7 @@ function validateSelectedPaths(
   availablePaths: Array<{ method: string, path: string }>
 ): string[] {
   const validPaths = new Set(
-    availablePaths.map(info => `${info.method}:${info.path}`)
+    availablePaths.map(info => info.path)
   )
 
   return selectedPaths.filter(path => validPaths.has(path))

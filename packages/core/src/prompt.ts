@@ -1,84 +1,74 @@
+import type { GeneratorOptions } from './generator'
 import type { SwaggerResponse } from './types'
 import { existsSync, mkdirSync } from 'node:fs'
 import process from 'node:process'
-import { confirm, group, intro, multiselect, outro, spinner, text } from '@clack/prompts'
+import { confirm, intro, outro, spinner, text } from '@clack/prompts'
 import { normalize, resolve } from 'pathe'
 import { DEFAULT_OUTPUT_DIR } from './config'
-
-interface PathInfo {
-  method: string
-  path: string
-  summary?: string
-  operationId?: string
-  group: string
-}
 
 export async function promptUserInteraction(responses: SwaggerResponse[]): Promise<{
   selectedPaths: string[]
   outputDir: string
-  pathDetails: PathInfo[]
+  pathDetails: GeneratorOptions['pathDetails']
 }> {
   intro('API Smasher - Swagger to TypeScript converter')
 
-  const s = spinner()
-  s.start('Loading available API endpoints')
-
-  // 1. 按 remote + name 分组并展示所有可用的API路径供用户选择
-  const groupedPaths = responses.reduce((acc, response) => {
-    const groupName = `${response.name} (${response.remote})`
-    const paths = Object.entries(response.paths || {}).flatMap(([path, methods]) =>
+  // 1. 获取所有可用的API路径
+  const availablePaths = responses.flatMap(response =>
+    Object.entries(response.paths || {}).flatMap(([path, methods]) =>
       Object.entries(methods as Record<string, any>).map(([method, info]) => ({
         method: method.toUpperCase(),
         path,
         summary: info.summary,
         operationId: info.operationId,
-        group: groupName
+        raw: info
       }))
     )
-    acc[groupName] = paths
-    return acc
-  }, {} as Record<string, PathInfo[]>)
+  )
 
-  // 2. 为每个分组创建选项
-  const groupSelections = Object.entries(groupedPaths)
-    .map(([groupName, paths]) => ({
-      name: groupName,
-      options: paths.map(info => ({
-        value: `${info.method}:${info.path}`,
-        label: `${info.method} ${info.path}`,
-        hint: info.summary || info.operationId
-      }))
-    }))
-    .reduce<Record<string, () => Promise<string[]>>>((acc, group) => {
-    acc[group.name] = () => multiselect({
-      message: 'Select the API endpoints to generate',
-      options: group.options,
-      required: true
-    }) as Promise<string[]>
-    return acc
-  }, {})
-
-  s.stop('Loaded API endpoints')
-
-  // 3. 使用 group 进行分组选择
-  const selections = await group(groupSelections, {
-    onCancel() {
-      outro('Operation cancelled')
-      process.exit(0)
+  // 2. 询问用户需要创建哪些接口
+  const pathInput = await text({
+    message: 'Enter the API paths to generate (comma separated)',
+    placeholder: '/api/test,/api/create',
+    validate(value) {
+      if (!value)
+        return 'Please enter at least one API path'
     }
-  })
+  }) as string
 
-  const selectedPaths = Object.values(selections).flat()
-  if (!selectedPaths || selectedPaths.length === 0) {
+  if (pathInput === null) {
     outro('Operation cancelled')
     process.exit(0)
+  }
+
+  // 3. 解析用户输入的路径
+  const s = spinner()
+  s.start('Validating API paths')
+
+  const selectedPaths = pathInput.split(',').map(p => p.trim())
+  const validPaths = selectedPaths.filter((path) => {
+    return availablePaths.some(p => p.path === path)
+  })
+
+  if (validPaths.length === 0) {
+    s.stop('No valid API paths found')
+    outro('Please check your input and try again')
+    process.exit(1)
+  }
+
+  if (validPaths.length !== selectedPaths.length) {
+    const invalidPaths = selectedPaths.filter(p => !validPaths.includes(p))
+    s.stop(`Warning: Some paths are invalid: ${invalidPaths.join(', ')}`)
+  }
+  else {
+    s.stop('All paths are valid')
   }
 
   // 4. 询问输出目录
   const outputDir = await text({
     message: 'Where would you like to create the API files?',
     placeholder: DEFAULT_OUTPUT_DIR,
-    validate(value: string) {
+    validate(value) {
       if (!value)
         return 'Please enter a directory path'
     }
@@ -112,12 +102,11 @@ export async function promptUserInteraction(responses: SwaggerResponse[]): Promi
   }
 
   // 5. 返回用户选择的信息
-  const allPaths = Object.values(groupedPaths).flat()
   return {
-    selectedPaths,
+    selectedPaths: validPaths,
     outputDir: fullPath,
-    pathDetails: allPaths.filter(info =>
-      selectedPaths.includes(`${info.method}:${info.path}`)
+    pathDetails: availablePaths.filter(info =>
+      validPaths.includes(info.path)
     )
   }
 }
