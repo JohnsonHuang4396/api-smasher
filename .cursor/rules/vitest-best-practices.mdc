@@ -1,0 +1,9 @@
+---
+description: vitest-best-practices
+globs: **/test*.{ts}
+---
+- Write thorough unit tests to validate individual functions and components
+- Use Vitest's mocking capabilities to isolate dependencies
+- Follow the Arrange-Act-Assert pattern for clear and consistent tests
+- Utilize Vitest's concurrent test running for faster test suites
+- Use Vitest's code coverage reports to ensure adequate test coverage
