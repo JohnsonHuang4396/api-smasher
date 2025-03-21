@@ -1,5 +1,5 @@
 import type { GeneratorOptions } from '.'
-import type { SwaggerResponse } from '../types'
+import type { SwaggerResponse, SwaggerSchemaDefinition } from '../types'
 
 function getTypeFromSchema(prop: any): string {
   if (prop.$ref) {
@@ -79,9 +79,30 @@ ${getPropertyDefinition(name, type, optional)}`
     .join('\n')
 }
 
-// TODO: 需要解决当类型为引用类型，且多层级时，无法正确生成类型的问题（考虑递归）
+export function recursiveSchema(flatSchema: [string, SwaggerSchemaDefinition][], typeList: string[]): string[] {
+  const result: string[] = []
+  const schemaList = flatSchema.filter(([name]) => typeList.includes(name))
+  for (let index = 0; index < schemaList.length; index++) {
+    const { properties } = schemaList[index][1]
+    const filteredProperties = Object.entries(properties ?? {}).filter(([, val]) => val.type === 'object' || val.type === 'array')
+    if (!filteredProperties.length)
+      break
+    for (const [, element] of filteredProperties) {
+      if (element.type === 'object') {
+        result.push(...recursiveSchema(flatSchema, [(element as any)?.$ref?.split('/')?.pop()]))
+        continue
+      }
+      if (element.type === 'array') {
+        result.push(...recursiveSchema(flatSchema, [(element as any)?.items?.$ref?.split('/')?.pop()]))
+        continue
+      }
+    }
+  }
+  return [...new Set([...result, ...typeList])]
+}
+
 export function generateModelContent(pathDetails: GeneratorOptions['pathDetails'], responses: SwaggerResponse[]): string {
-  const typeList = pathDetails.reduce<string[]>((acc, detail) => {
+  const typeList1 = pathDetails.reduce<string[]>((acc, detail) => {
     const methodInfo = detail.raw
     const responseType = getResponseType(methodInfo, [])
     if (responseType) {
@@ -103,14 +124,16 @@ export function generateModelContent(pathDetails: GeneratorOptions['pathDetails'
       Object.entries(response.components?.schemas || {})
     )
 
-  const schemas = flatSchemas.filter(([name]) => typeList.includes(name))
+  const typeList2 = recursiveSchema(flatSchemas, typeList1)
 
-  return schemas.map(([name, schema]) => {
-    return `
+  return flatSchemas
+    .filter(([name]) => typeList2.includes(name))
+    .map(([name, schema]) => {
+      return `
 export interface ${name} {
 ${generateTypeProperties(schema)}
 }
 `
-  })
+    })
     .join('\n')
 }
