@@ -1,3 +1,4 @@
+import type { GeneratorOptions } from '.'
 import type { SwaggerResponse } from '../types'
 
 function getTypeFromSchema(prop: any): string {
@@ -20,6 +21,31 @@ function getTypeFromSchema(prop: any): string {
     default:
       return 'any'
   }
+}
+
+export function getParamType(parameters: any, result: string[]): string[] {
+  if (!parameters || !parameters.length)
+    return result
+  if (parameters[0]?.schema?.$ref)
+    result.push(parameters[0].schema.$ref.split('/').pop())
+  return result
+}
+
+export function getBodyType(method: any, result: string[]): string[] {
+  const schema = method?.requestBody?.content?.['application/json']?.schema
+  if (!schema)
+    return result
+  if (schema.$ref)
+    result.push(schema.$ref.split('/').pop())
+  return result
+}
+
+function getResponseType(method: any, result: string[]): string[] {
+  const schema = method?.responses?.['200']?.content?.['*/*']?.schema
+  if (!schema || !schema.$ref)
+    return result
+  result.push(schema.$ref.split('/').pop())
+  return result
 }
 
 function getPropertyDefinition(
@@ -53,11 +79,31 @@ ${getPropertyDefinition(name, type, optional)}`
     .join('\n')
 }
 
-export function generateModelContent(responses: SwaggerResponse[]): string {
-  // 从responses中提取所有需要的类型定义
-  const schemas = responses.flatMap(response =>
-    Object.entries(response.components?.schemas || {})
-  )
+// TODO: 需要解决当类型为引用类型，且多层级时，无法正确生成类型的问题（考虑递归）
+export function generateModelContent(pathDetails: GeneratorOptions['pathDetails'], responses: SwaggerResponse[]): string {
+  const typeList = pathDetails.reduce<string[]>((acc, detail) => {
+    const methodInfo = detail.raw
+    const responseType = getResponseType(methodInfo, [])
+    if (responseType) {
+      acc.push(...responseType)
+    }
+    const bodyType = getBodyType(methodInfo, [])
+    if (bodyType) {
+      acc.push(...bodyType)
+    }
+    const paramType = getParamType(methodInfo.parameters, [])
+    if (paramType) {
+      acc.push(...paramType)
+    }
+    return acc
+  }, [])
+
+  const flatSchemas = responses
+    .flatMap(response =>
+      Object.entries(response.components?.schemas || {})
+    )
+
+  const schemas = flatSchemas.filter(([name]) => typeList.includes(name))
 
   return schemas.map(([name, schema]) => {
     return `
@@ -65,5 +111,6 @@ export interface ${name} {
 ${generateTypeProperties(schema)}
 }
 `
-  }).join('\n')
+  })
+    .join('\n')
 }

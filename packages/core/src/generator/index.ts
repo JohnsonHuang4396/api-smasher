@@ -42,6 +42,6 @@ export async function generateApiFiles({
   const apiContent = await generateApiContent(pathDetails, generateConfig)
   generateFiles(outputDir, apiPath, apiContent)
 
-  const modelContent = generateModelContent(responses)
+  const modelContent = generateModelContent(pathDetails, responses)
   generateFiles(outputDir, modelPath, modelContent)
 }

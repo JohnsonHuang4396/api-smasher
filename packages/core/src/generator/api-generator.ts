@@ -17,7 +17,7 @@ export async function generateApiContent(
 ): Promise<string> {
   try {
     const templatePath = normalize(
-      options.template || join(dirname(import.meta.url), DEFAULT_API_TEMPLATE_PATH)
+      options.template || join(dirname(import.meta.url), '..', DEFAULT_API_TEMPLATE_PATH)
     ).replace('file:', '')
 
     const result = await renderFile(templatePath, {
