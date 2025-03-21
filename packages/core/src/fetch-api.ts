@@ -11,7 +11,7 @@ export async function fetchSwaggerDocs(config: SwaggerConfig): Promise<SwaggerRe
     }
     catch (error) {
       if (error instanceof Error) {
-        throw new TypeError(`Failed to fetch swagger doc from ${endpoint.remote}: ${error.message}`)
+        throw new TypeError(`❌ Failed to fetch swagger doc from ${endpoint.remote}: ${error.message}`)
       }
       throw error
     }
@@ -44,7 +44,7 @@ async function fetchEndpoint(endpoint: SwaggerEndpoint): Promise<SwaggerResponse
   const fetchResponse = await fetch(remote, fetchOptions)
 
   if (!fetchResponse.ok) {
-    throw new Error(`HTTP error! status: ${fetchResponse.status}`)
+    throw new Error(`❌ HTTP error! status: ${fetchResponse.status}`)
   }
 
   const data = (await fetchResponse.json()) as SwaggerDocument

@@ -1,11 +1,12 @@
 import type { GeneratorOptions } from './generator'
+import type { ApiGeneratorOptions } from './generator/api-generator'
 import type { SwaggerConfig, SwaggerResponse } from './types'
 import { DEFAULT_OUTPUT_DIR } from './config'
 import { fetchSwaggerDocs } from './fetch-api'
 import { generateApiFiles } from './generator'
 import { promptUserInteraction } from './prompt'
 
-interface ActionOptions {
+export interface ActionOptions {
   /**
    * Swagger API 文档地址配置
    */
@@ -22,13 +23,30 @@ interface ActionOptions {
    * 自动执行时要生成的API路径列表
    */
   selectedPaths?: string[]
+  /**
+   * 生成配置
+   */
+  generateConfig?: {
+    /**
+     * 是否生成模型文件
+     */
+    model?: boolean
+    /**
+     * API 生成配置
+     */
+    api?: ApiGeneratorOptions
+  }
 }
 
 export async function generateApi({
   config,
   autoRun = false,
   outputDir = DEFAULT_OUTPUT_DIR,
-  selectedPaths = []
+  selectedPaths = [],
+  generateConfig = {
+    model: true,
+    api: {}
+  }
 }: ActionOptions): Promise<void> {
   try {
     // 1. 获取 Swagger 文档
@@ -54,12 +72,13 @@ export async function generateApi({
       selectedPaths: validPaths,
       pathDetails: availablePaths.filter(info =>
         validPaths.includes(info.path)
-      )
+      ),
+      generateConfig
     })
   }
   catch (error) {
     if (error instanceof Error)
-      throw new Error(`Failed to generate API: ${error.message}`)
+      throw new Error(`❌ Failed to generate API: ${error.message}`)
     throw error
   }
 }
@@ -68,6 +87,7 @@ interface ProcessResult {
   outputDir: string
   selectedPaths: string[]
   pathDetails: GeneratorOptions['pathDetails']
+  generateConfig: ActionOptions['generateConfig']
 }
 
 async function processApiGeneration(
@@ -75,15 +95,17 @@ async function processApiGeneration(
   result: ProcessResult
 ): Promise<void> {
   try {
-    generateApiFiles({
-      outputDir: result.outputDir,
-      pathDetails: result.pathDetails,
-      responses
+    const { outputDir, pathDetails, generateConfig } = result
+    await generateApiFiles({
+      outputDir,
+      pathDetails,
+      responses,
+      generateConfig
     })
   }
   catch (error) {
     if (error instanceof Error)
-      throw new Error(`Failed to generate API files: ${error.message}`)
+      throw new Error(`❌ Failed to generate API files: ${error.message}`)
     throw error
   }
 }
@@ -91,13 +113,16 @@ async function processApiGeneration(
 function extractAvailablePaths(responses: SwaggerResponse[]): Array<ProcessResult['pathDetails'][number]> {
   return responses.flatMap(response =>
     Object.entries(response.paths || {}).flatMap(([path, methods]) =>
-      Object.entries(methods as Record<string, any>).map(([method, info]) => ({
-        method: method.toUpperCase(),
-        path,
-        summary: info.summary,
-        operationId: info.operationId,
-        raw: info
-      }))
+      Object.entries(methods as Record<string, any>).map(([method, info]) => {
+        const { summary, operationId } = info
+        return {
+          method: method.toUpperCase(),
+          path,
+          summary,
+          operationId,
+          raw: info
+        }
+      })
     )
   )
 }

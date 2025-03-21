@@ -1,0 +1,62 @@
+<% function getMethodName(path) {
+  return path.split('/').pop()
+} %>
+<% function getResponseType(method) {
+  const schema = method?.responses?.['200']?.content?.['*/*']?.schema
+  if (!schema || !schema.$ref) return ''
+  return `<${schema.$ref.split('/').pop()}>`
+} %>
+<% function getParamType(parameters) {
+  if (!parameters || !parameters.length) return null
+  if (parameters[0].schema?.$ref) return parameters[0].schema.$ref.split('/').pop()
+  return `{ ${parameters.map(p => `${p.name}: ${getTypeFromSchema(p.schema)}`).join(', ')} }`
+} %>
+<% function getBodyType(method) {
+  const schema = method?.requestBody?.content?.['application/json']?.schema
+  if (!schema) return null
+  if (schema.$ref) return schema.$ref.split('/').pop()
+  if (schema.type === 'array') {
+    return `{ ${schema.items.map(item => `${item.name}: ${getTypeFromSchema(item.schema)}`).join(', ')} }`
+  }
+  return 'unknown'
+} %>
+<% function getTypeFromSchema(prop) {
+  if (prop.$ref) return prop.$ref.split('/').pop()
+  switch (prop.type) {
+    case 'string': return 'string'
+    case 'integer':
+    case 'number': return 'number'
+    case 'boolean': return 'boolean'
+    case 'array': return `${getTypeFromSchema(prop.items)}[]`
+    case 'object': return 'Record<string, any>'
+    default: return 'any'
+  }
+} %>
+<% pathDetails.forEach(detail => {
+  const methodName = getMethodName(detail.path)
+  const methodInfo = detail.raw
+  const responseType = getResponseType(methodInfo)
+  if (detail.method.toLowerCase() === 'post') {
+    const bodyType = getBodyType(methodInfo)
+-%>
+export async function <%= methodName %>(<% if (bodyType) { %>body: <%- bodyType %><% } %>) {
+  const result = await axios.post<%- responseType %>(
+    "/api<%= detail.path %>",
+    <% if (bodyType) { %>body<% } %>
+  );
+  return result.data.data;
+}
+<%   } else if (detail.method.toLowerCase() === 'get') {
+    const paramsType = getParamType(methodInfo.parameters)
+-%>
+export async function <%= methodName %>(<% if (paramsType) { %>params: <%- paramsType %><% } %>) {
+  const result = await axios.get<%- responseType %>(
+    "/api<%= detail.path %>",
+    <% if (paramsType) { %>{
+      params,
+    }<% } %>
+  );
+  return result.data.data;
+}
+<%   }
+}) %>

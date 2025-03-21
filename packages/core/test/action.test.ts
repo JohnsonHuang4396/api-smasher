@@ -6,7 +6,7 @@ import { generateApi } from '../src/action'
 const REAL_SWAGGER_URL = 'http://192.168.100.125:18083/v3/api-docs'
 const TEST_OUTPUT_DIR = './test/test-output/api'
 
-describe('generateApi', () => {
+describe('generateApi', { only: true }, () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })

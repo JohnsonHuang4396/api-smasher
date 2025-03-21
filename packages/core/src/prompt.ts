@@ -1,8 +1,9 @@
+import type { ActionOptions } from './action'
 import type { GeneratorOptions } from './generator'
 import type { SwaggerResponse } from './types'
 import { existsSync, mkdirSync } from 'node:fs'
 import process from 'node:process'
-import { confirm, intro, outro, spinner, text } from '@clack/prompts'
+import { confirm, intro, outro, select, spinner, text } from '@clack/prompts'
 import { normalize, resolve } from 'pathe'
 import { DEFAULT_OUTPUT_DIR } from './config'
 
@@ -10,6 +11,7 @@ export async function promptUserInteraction(responses: SwaggerResponse[]): Promi
   selectedPaths: string[]
   outputDir: string
   pathDetails: GeneratorOptions['pathDetails']
+  generateConfig: ActionOptions['generateConfig']
 }> {
   intro('API Smasher - Swagger to TypeScript converter')
 
@@ -91,14 +93,39 @@ export async function promptUserInteraction(responses: SwaggerResponse[]): Promi
         mkdirSync(fullPath, { recursive: true })
       }
       catch (error) {
-        outro(`Failed to create directory: ${error instanceof Error ? error.message : String(error)}`)
+        outro(`❌ Failed to create directory: ${error instanceof Error ? error.message : String(error)}`)
         process.exit(1)
       }
     }
     else {
-      outro('Operation cancelled')
+      outro('❌ Operation cancelled')
       process.exit(0)
     }
+  }
+
+  const isGenerateModel = await confirm({
+    message: 'Do you want to generate model files?',
+    initialValue: true
+  }) as boolean
+
+  const isCustomAPITemplate = await select({
+    message: 'Do you want to use a custom API template?',
+    options: [
+      { value: 'default', label: 'Default' },
+      { value: 'custom', label: 'Custom' }
+    ]
+  })
+
+  let apiTemplatePath = ''
+  if (isCustomAPITemplate === 'custom') {
+    apiTemplatePath = await text({
+      message: 'Enter the path to your custom API template',
+      placeholder: '~/path/to/template.ejs'
+    }) as string
+  }
+
+  if (!apiTemplatePath) {
+    outro('❌ No custom API template provided, using default template')
   }
 
   // 5. 返回用户选择的信息
@@ -107,6 +134,12 @@ export async function promptUserInteraction(responses: SwaggerResponse[]): Promi
     outputDir: fullPath,
     pathDetails: availablePaths.filter(info =>
       validPaths.includes(info.path)
-    )
+    ),
+    generateConfig: {
+      model: isGenerateModel,
+      api: {
+        template: apiTemplatePath
+      }
+    }
   }
 }
