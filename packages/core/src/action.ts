@@ -1,6 +1,6 @@
 import type { GeneratorOptions } from './generator'
-import type { ApiGeneratorOptions } from './generator/api-generator'
 import type { SwaggerConfig, SwaggerResponse } from './types'
+import { select } from '@clack/prompts'
 import { DEFAULT_OUTPUT_DIR } from './config'
 import { fetchSwaggerDocs } from './fetch-api'
 import { generateApiFiles } from './generator'
@@ -34,7 +34,12 @@ export interface ActionOptions {
     /**
      * API 生成配置
      */
-    api?: ApiGeneratorOptions
+    api?: {
+      /**
+       * 模板路径
+       */
+      template?: string[] | { name: string, path: string }[]
+    }
   }
 }
 
@@ -54,7 +59,14 @@ export async function generateApi({
 
     // 2. 如果不是自动运行，则进行用户交互
     if (!autoRun) {
-      const result = await promptUserInteraction(responses)
+      const result = await promptUserInteraction({
+        responses,
+        actionOptions: {
+          config,
+          outputDir,
+          generateConfig
+        }
+      })
       return await processApiGeneration(responses, result)
     }
 
@@ -64,7 +76,7 @@ export async function generateApi({
     // 验证选择的路径是否有效
     const validPaths = validateSelectedPaths(selectedPaths, availablePaths)
     if (validPaths.length === 0)
-      throw new Error('No valid API paths selected')
+      throw new Error('❌ No valid API paths selected')
 
     // 4. 生成文件
     return await processApiGeneration(responses, {
@@ -96,11 +108,33 @@ async function processApiGeneration(
 ): Promise<void> {
   try {
     const { outputDir, pathDetails, generateConfig } = result
+    let template: string | undefined
+    if (Array.isArray(generateConfig?.api?.template) && generateConfig.api.template.length > 1) {
+      template = await select({
+        message: 'Select the API template',
+        options: generateConfig.api.template.map((template) => {
+          if (typeof template === 'string') {
+            return {
+              value: template,
+              label: template
+            }
+          }
+          return {
+            value: template.name,
+            label: template.name,
+            hint: template.path
+          }
+        })
+      }) as string
+    }
     await generateApiFiles({
       outputDir,
       pathDetails,
       responses,
-      generateConfig
+      generateConfig: {
+        ...generateConfig,
+        template
+      }
     })
   }
   catch (error) {

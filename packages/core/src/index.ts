@@ -1,5 +1,5 @@
-export { generateApi } from './action'
+export * from './action'
 export { fetchSwaggerDocs } from './fetch-api'
 export { generateApiFiles } from './generator'
-export { promptUserInteraction } from './prompt'
+export * from './prompt'
 export * from './types'

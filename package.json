@@ -20,6 +20,7 @@
     "@antfu/ni": "catalog:",
     "@antfu/utils": "catalog:",
     "@johnsonhuang4396/api-smasher": "workspace:*",
+    "@johnsonhuang4396/vite-plugin-api-smasher": "workspace:*",
     "@types/node": "catalog:",
     "bumpp": "catalog:",
     "eslint": "catalog:",
@@ -27,7 +28,6 @@
     "simple-git-hooks": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "unbuild": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   },

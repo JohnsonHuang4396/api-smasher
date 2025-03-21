@@ -1,6 +1,7 @@
 import type { GeneratorOptions } from '.'
+import { dirname } from 'node:path'
 import { renderFile } from 'ejs'
-import { normalize } from 'pathe'
+import { join, normalize } from 'pathe'
 import { DEFAULT_API_TEMPLATE_PATH } from '../config'
 
 export interface ApiGeneratorOptions {
@@ -15,7 +16,9 @@ export async function generateApiContent(
   options: ApiGeneratorOptions = {}
 ): Promise<string> {
   try {
-    const templatePath = normalize(options.template || DEFAULT_API_TEMPLATE_PATH)
+    const templatePath = normalize(
+      options.template || join(dirname(import.meta.url), DEFAULT_API_TEMPLATE_PATH)
+    ).replace('file:', '')
 
     const result = await renderFile(templatePath, {
       pathDetails
