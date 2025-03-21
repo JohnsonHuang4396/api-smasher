@@ -16,5 +16,13 @@ export default antfu(
       'packages/core/test/__snapshots__/*',
       'packages/core/test/test-output/*'
     ]
+  },
+  {
+    files: ['playground/**/*.ts'],
+    rules: {
+      'ts/ban-ts-comment': 'off',
+      'ts/explicit-function-return-type': 'off',
+      'ts/no-explicit-any': 'off'
+    }
   }
 )
