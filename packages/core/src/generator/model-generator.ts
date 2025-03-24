@@ -84,16 +84,19 @@ export function recursiveSchema(flatSchema: [string, SwaggerSchemaDefinition][],
   const schemaList = flatSchema.filter(([name]) => typeList.includes(name))
   for (let index = 0; index < schemaList.length; index++) {
     const { properties } = schemaList[index][1]
-    const filteredProperties = Object.entries(properties ?? {}).filter(([, val]) => val.type === 'object' || val.type === 'array')
+    const filteredProperties = Object.entries(properties ?? {}).filter(([, val]) => (val as any)?.$ref || val.type === 'array')
     if (!filteredProperties.length)
-      break
+      continue
+
     for (const [, element] of filteredProperties) {
-      if (element.type === 'object') {
-        result.push(...recursiveSchema(flatSchema, [(element as any)?.$ref?.split('/')?.pop()]))
+      if ((element as any)?.$ref) {
+        const key = (element as any)?.$ref?.split('/')?.pop()
+        result.push(...recursiveSchema(flatSchema, [key]))
         continue
       }
       if (element.type === 'array') {
-        result.push(...recursiveSchema(flatSchema, [(element as any)?.items?.$ref?.split('/')?.pop()]))
+        const key = (element as any)?.items?.$ref?.split('/')?.pop()
+        result.push(...recursiveSchema(flatSchema, [key]))
         continue
       }
     }
@@ -124,7 +127,7 @@ export function generateModelContent(pathDetails: GeneratorOptions['pathDetails'
       Object.entries(response.components?.schemas || {})
     )
 
-  const typeList2 = recursiveSchema(flatSchemas, typeList1)
+  const typeList2 = recursiveSchema(flatSchemas, [...new Set(typeList1)])
 
   return flatSchemas
     .filter(([name]) => typeList2.includes(name))

@@ -6,7 +6,13 @@ const flatSchemas = Object.entries(test.schemas)
 
 describe('model-generator', { only: true }, () => {
   it('check recursive schema', () => {
-    const result = recursiveSchema(flatSchemas as any, ['IPageWechatEmployeeConversationVO', 'IPageWechatClientConversationVO'])
-    expect(result).toEqual(['WechatEmployeeConversationVO', 'WechatClientConversationVO', 'IPageWechatEmployeeConversationVO', 'IPageWechatClientConversationVO'])
+    const result = recursiveSchema(flatSchemas as any, [
+      'RIPageWechatEmployeeConversationVO'
+    ])
+    expect(result).toEqual([
+      'WechatEmployeeConversationVO',
+      'IPageWechatEmployeeConversationVO',
+      'RIPageWechatEmployeeConversationVO'
+    ])
   })
 })

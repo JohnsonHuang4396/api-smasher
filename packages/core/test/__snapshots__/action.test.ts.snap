@@ -88,6 +88,35 @@ endDate?: string;
 }
 
 
+export interface IPageWechatEmployeeConversationVO {
+/**
+* size
+*/
+size?: number;
+
+/**
+* records
+*/
+records?: WechatEmployeeConversationVO[];
+
+/**
+* current
+*/
+current?: number;
+
+/**
+* total
+*/
+total?: number;
+
+/**
+* pages
+*/
+pages?: number;
+
+}
+
+
 export interface RIPageWechatEmployeeConversationVO {
 /**
 * code
@@ -112,6 +141,104 @@ msg?: string;
 }
 
 
+export interface WechatEmployeeConversationVO {
+/**
+* 员工姓名
+*/
+userName?: string;
+
+/**
+* 所属组织Id
+*/
+orgId?: string;
+_orgId?: string;
+/**
+* 联系客户数
+*/
+contactClientNum?: number;
+
+/**
+* 活跃客户数
+*/
+activeClientNum?: number;
+
+/**
+* 沉默客户数
+*/
+inactiveClientNum?: number;
+
+/**
+* 咨询会话数
+*/
+clientContactNum?: number;
+
+/**
+* 回复会话数
+*/
+replyClientNum?: number;
+
+/**
+* 未回复会话数
+*/
+noReplyClientNum?: number;
+
+/**
+* 咨询回复率
+*/
+replyRatio?: string;
+
+/**
+* 平均会话时长
+*/
+avgDuration?: string;
+
+/**
+* 发送消息总数
+*/
+contactClientMsgNum?: number;
+
+/**
+* 主动发送消息数
+*/
+proactiveMsgNum?: number;
+
+/**
+* 与客户沟通确认申报税款通知次数
+*/
+taxConfirmNum?: number;
+
+}
+
+
+export interface IPageWechatClientConversationVO {
+/**
+* size
+*/
+size?: number;
+
+/**
+* records
+*/
+records?: WechatClientConversationVO[];
+
+/**
+* current
+*/
+current?: number;
+
+/**
+* total
+*/
+total?: number;
+
+/**
+* pages
+*/
+pages?: number;
+
+}
+
+
 export interface RIPageWechatClientConversationVO {
 /**
 * code
@@ -132,6 +259,70 @@ data?: IPageWechatClientConversationVO;
 * msg
 */
 msg?: string;
+
+}
+
+
+export interface WechatClientConversationVO {
+/**
+* 企业名称
+*/
+clientName?: string;
+
+/**
+* 所属组织Id
+*/
+orgId?: string;
+_orgId?: string;
+/**
+* 员工发送消息数
+*/
+employeeMsgNum?: number;
+
+/**
+* 客户发送消息数
+*/
+clientMsgNum?: number;
+
+/**
+* 咨询会话数
+*/
+clientContactNum?: number;
+
+/**
+* 回复会话数
+*/
+replyClientNum?: number;
+
+/**
+* 未回复会话数
+*/
+noReplyClientNum?: number;
+
+/**
+* 咨询回复率
+*/
+replyRatio?: string;
+
+/**
+* 平均会话时长
+*/
+avgDuration?: string;
+
+/**
+* 关联企微群名称
+*/
+weChatGroupName?: string;
+
+/**
+* 是否及时建群
+*/
+isPromptlySetUp?: string;
+
+/**
+* 与客户沟通确认申报税款通知次数
+*/
+taxConfirmNum?: number;
 
 }
 "

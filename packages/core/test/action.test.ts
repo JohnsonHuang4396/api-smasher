@@ -6,12 +6,12 @@ import { generateApi } from '../src/action'
 const REAL_SWAGGER_URL = 'http://192.168.100.125:18083/v3/api-docs'
 const TEST_OUTPUT_DIR = './test/test-output/api'
 
-describe('generateApi', { only: true }, () => {
+describe('generateApi', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should generate API files in auto-run mode and match snapshot', async () => {
+  it('should generate API files in auto-run mode and match snapshot', { only: true }, async () => {
     if (fs.existsSync(TEST_OUTPUT_DIR)) {
       fs.rmSync(TEST_OUTPUT_DIR, { recursive: true })
     }
