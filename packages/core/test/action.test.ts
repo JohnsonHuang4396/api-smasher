@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { generateApi } from '../dist'
+import { generateApi } from '../src'
 
 const REAL_SWAGGER_URL = 'http://192.168.100.125:18083/v3/api-docs'
 const TEST_OUTPUT_DIR = './test/test-output/api'
@@ -11,7 +11,7 @@ describe('generateApi', () => {
     vi.clearAllMocks()
   })
 
-  it('should generate API files in auto-run mode and match snapshot', { only: true }, async () => {
+  it('should generate API files in auto-run mode and match snapshot', async () => {
     if (fs.existsSync(TEST_OUTPUT_DIR)) {
       fs.rmSync(TEST_OUTPUT_DIR, { recursive: true })
     }

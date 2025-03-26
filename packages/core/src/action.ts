@@ -1,7 +1,7 @@
 import type { GeneratorOptions } from './generator'
 import type { SwaggerConfig, SwaggerResponse } from './types'
 import { select } from '@clack/prompts'
-import { DEFAULT_OUTPUT_DIR } from './config'
+import { DEFAULT_API_OUTPUT_DIR, DEFAULT_MODEL_OUTPUT_DIR, DEFAULT_OUTPUT_DIR } from './config'
 import { fetchSwaggerDocs } from './fetch-api'
 import { generateApiFiles } from './generator'
 import { promptUserInteraction } from './prompt'
@@ -16,7 +16,7 @@ export interface ActionOptions {
    */
   autoRun?: boolean
   /**
-   * 自动执行时的输出目录
+   * 自动执行时的输出目录，默认为./src/api
    */
   outputDir?: string
   /**
@@ -30,11 +30,28 @@ export interface ActionOptions {
     /**
      * 是否生成模型文件
      */
-    model?: boolean
+    model?: {
+      /**
+       * 是否启用模型文件生成
+       */
+      enable?: boolean
+      /**
+       * 输出目录，默认为./Model.ts
+       */
+      outputDir?: string
+    }
     /**
      * API 生成配置
      */
     api?: {
+      /**
+       * 是否生成 API 文件
+       */
+      enable?: boolean
+      /**
+       * 输出目录，默认为./Api.ts
+       */
+      outputDir?: string
       /**
        * 模板路径
        */
@@ -49,8 +66,14 @@ export async function generateApi({
   outputDir = DEFAULT_OUTPUT_DIR,
   selectedPaths = [],
   generateConfig = {
-    model: true,
-    api: {}
+    model: {
+      enable: true,
+      outputDir: DEFAULT_MODEL_OUTPUT_DIR
+    },
+    api: {
+      enable: true,
+      outputDir: DEFAULT_API_OUTPUT_DIR
+    }
   }
 }: ActionOptions): Promise<void> {
   try {

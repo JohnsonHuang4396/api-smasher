@@ -12,16 +12,18 @@
     "generator"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.mjs",
+    "./*": "./*"
   },
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
+    "dev": "unbuild --watch",
+    "build": "unbuild",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
@@ -33,9 +35,11 @@
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^3.0.9",
-    "tsup": "catalog:",
+    "fs-extra": "^11.3.0",
+    "unbuild": "catalog:",
     "vitest": "catalog:"
   }
 }

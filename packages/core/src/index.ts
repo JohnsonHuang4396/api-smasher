@@ -1,7 +1,5 @@
 export * from './action'
 export * from './fetch-api'
 export * from './generator'
-export * from './generator/api-generator'
-export * from './generator/model-generator'
 export * from './prompt'
 export * from './types'

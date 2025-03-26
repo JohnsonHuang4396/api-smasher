@@ -11,5 +11,6 @@ node_modules
 temp
 cache
 .eslintcache
+__snapshots__
 test.json
 test-output
