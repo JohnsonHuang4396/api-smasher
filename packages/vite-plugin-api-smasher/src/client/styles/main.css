@@ -1,0 +1,22 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html.dark {
+  background: #121212;
+  color-scheme: dark;
+}
+
+.CodeMirror {
+  height: inherit !important;
+  font-family: var(--cm-font-family) !important;
+  font-size: 13px !important;
+}
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: var(--cm-background) !important;
+}

@@ -12,24 +12,44 @@
     "api",
     "generator"
   ],
-  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./*": "./*"
+  },
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup"
+    "dev": "nr stub && vite src/client",
+    "dev:client": "vite build src/client --watch",
+    "stub": "unbuild --stub",
+    "build": "rimraf dist && pnpm run --sequential /^build:/",
+    "build:client": "vite build src/client",
+    "build:js": "unbuild"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0"
   },
   "dependencies": {
-    "@johnsonhuang4396/api-smasher": "workspace:*"
+    "@johnsonhuang4396/api-smasher": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@iconify/json": "^2.2.320",
     "@types/node": "catalog:",
-    "tsup": "catalog:",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "codemirror-theme-vars": "^0.1.2",
+    "typescript": "catalog:",
+    "unbuild": "catalog:",
+    "unocss": "catalog:",
+    "unplugin-auto-import": "^19.1.1",
+    "unplugin-vue-components": "catalog:",
+    "unplugin-vue-router": "^0.12.0",
     "vite": "catalog:"
   }
 }

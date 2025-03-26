@@ -1,90 +1,81 @@
 import type { PromptActionOptions } from '@johnsonhuang4396/api-smasher'
 import type { Plugin } from 'vite'
-import process, { exit } from 'node:process'
-import { createInterface } from 'node:readline'
-import { generateApi } from '@johnsonhuang4396/api-smasher'
+import { resolve } from 'node:path'
+import { createServer } from './server'
 
-let isListening = false
-let rl: ReturnType<typeof createInterface>
-
-function createRl(options: PromptActionOptions): void {
-  rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    prompt: '> '
-  })
-
-  // 显示提示信息
-  // eslint-disable-next-line no-console
-  console.log('\n🚀 API Smasher is ready!')
-  // eslint-disable-next-line no-console
-  console.log('Type "api-smasher" or "as" to generate API files\n')
-  rl.prompt()
-
-  // 监听用户输入
-  rl.on('line', async (input) => {
-    const command = input.trim().toLowerCase()
-    if (command === 'api-smasher' || command === 'as') {
-      try {
-        await generateApi({
-          ...options,
-          autoRun: false
-        })
-        // eslint-disable-next-line no-console
-        console.log('\n✅ API Smasher created successfully')
-        rl.prompt()
-      }
-      catch (error) {
-        console.error('❌ API generation failed:', error instanceof Error ? error.message : String(error))
-        rl.close()
-        isListening = false
-        createRl(options)
-      }
-    }
-  })
-
-  // 处理中断信号
-  process.on('SIGINT', () => {
-    if (rl) {
-      rl.close()
-      isListening = false
-    }
-  })
-
-  // 处理错误
-  rl.on('error', (error) => {
-    console.error('❌ Input error:', error.message)
-    rl.prompt()
-  })
-
-  // 处理关闭
-  rl.on('close', () => {
-    isListening = false
-    // eslint-disable-next-line no-console
-    console.log('\n👋 API Smasher stopped')
-    exit(0)
-  })
+export interface VitePluginApiSmasherOptions extends PromptActionOptions {
+  /**
+   * 启动端口，默认为8848
+   */
+  port?: string
 }
 
-export interface VitePluginApiSmasherOptions extends PromptActionOptions { }
+export default function ApiSmasher(options: VitePluginApiSmasherOptions): Plugin {
+  const port = options.port || '8848'
+  let server: ReturnType<typeof createServer>
 
-export default function apiSmasher(options: VitePluginApiSmasherOptions): Plugin {
   return {
     name: 'vite-plugin-api-smasher',
     apply: 'serve',
-    configureServer() {
-      if (isListening)
-        return
+    configureServer(vite) {
+      // 启动 API Smasher 服务器
+      server = createServer(options)
+      server.listen(Number.parseInt(port))
+      vite.resolvedUrls = {
+        local: [`http://localhost:${port}`],
+        network: []
+      }
 
-      isListening = true
-
-      // 创建 readline 接口
-      createRl(options)
+      // 注册静态资源路由
+      vite.middlewares.use('/api-smasher', (req, res, next) => {
+        if (req.url === '/') {
+          res.setHeader('Content-Type', 'text/html')
+          res.end(
+            `<!DOCTYPE html>
+            <html>
+              <head>
+                <title>API Smasher</title>
+                <script type="module" src="/api-smasher/client.js"></script>
+              </head>
+              <body>
+                <div id="app"></div>
+              </body>
+            </html>`
+          )
+          return
+        }
+        next()
+      })
+    },
+    configurePreviewServer(preview) {
+      preview.middlewares.use('/api-smasher', (req, res, next) => {
+        if (req.url === '/') {
+          res.setHeader('Content-Type', 'text/html')
+          res.end(
+            `<!DOCTYPE html>
+            <html>
+              <head>
+                <title>API Smasher</title>
+                <script type="module" src="/api-smasher/client.js"></script>
+              </head>
+              <body>
+                <div id="app"></div>
+              </body>
+            </html>`
+          )
+          return
+        }
+        next()
+      })
+    },
+    resolveId(id) {
+      if (id === '/api-smasher/client.js') {
+        return resolve(__dirname, 'client.js')
+      }
     },
     closeBundle() {
-      if (rl) {
-        rl.close()
-        isListening = false
+      if (server) {
+        server.close()
       }
     }
   }

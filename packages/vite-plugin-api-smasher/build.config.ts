@@ -1,10 +1,17 @@
-import { defineConfig } from 'tsup'
+import { defineBuildConfig } from 'unbuild'
 
-export default defineConfig({
-  entry: ['src/index.ts'],
-  format: ['cjs', 'esm'],
-  dts: true,
+export default defineBuildConfig({
+  entries: [
+    'src/index'
+  ],
   clean: true,
-  minify: true,
-  sourcemap: true
+  declaration: 'compatible',
+  externals: [
+    'vite'
+  ],
+  rollup: {
+    dts: {
+      respectExternal: true
+    }
+  }
 })
