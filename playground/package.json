@@ -2,7 +2,7 @@
   "name": "playground",
   "type": "module",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.6.4",
+  "packageManager": "pnpm@10.6.5",
   "description": "",
   "keywords": [],
   "main": "index.js",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@johnsonhuang4396/vite-plugin-api-smasher": "workspace:*",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-inspect": "^11.0.0"
   }
 }

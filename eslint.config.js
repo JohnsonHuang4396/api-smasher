@@ -14,7 +14,8 @@ export default antfu(
     },
     ignores: [
       'packages/core/test/__snapshots__/*',
-      'packages/core/test/test-output/*'
+      'packages/core/test/test-output/*',
+      'packages/vite-plugin-api-smasher/*'
     ]
   },
   {
