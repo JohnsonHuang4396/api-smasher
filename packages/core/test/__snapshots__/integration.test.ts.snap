@@ -633,6 +633,37 @@ exports[`integration Tests > should fetch multiple swagger endpoints and match s
       ],
     },
   },
+  "/reportBusiness/commissionEmployeeDetailPage": {
+    "post": {
+      "operationId": "commissionEmployeeDetailPage",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ReportBusinessCommissionDetailPageQO",
+            },
+          },
+        },
+        "required": true,
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/RIPageReportBusinessCommissionDetailVO",
+              },
+            },
+          },
+          "description": "OK",
+        },
+      },
+      "summary": "员工明细",
+      "tags": [
+        "商机漏斗",
+      ],
+    },
+  },
   "/reportBusiness/commissionEmployeePage": {
     "post": {
       "operationId": "commissionEmployeePage",
@@ -3772,6 +3803,37 @@ exports[`integration Tests > should fetch multiple swagger endpoints and match s
       ],
     },
   },
+  "/reportBusiness/commissionEmployeeDetailPage": {
+    "post": {
+      "operationId": "commissionEmployeeDetailPage",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ReportBusinessCommissionDetailPageQO",
+            },
+          },
+        },
+        "required": true,
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/RIPageReportBusinessCommissionDetailVO",
+              },
+            },
+          },
+          "description": "OK",
+        },
+      },
+      "summary": "员工明细",
+      "tags": [
+        "商机漏斗",
+      ],
+    },
+  },
   "/reportBusiness/commissionEmployeePage": {
     "post": {
       "operationId": "commissionEmployeePage",
@@ -6368,6 +6430,8 @@ exports[`integration Tests > should fetch real swagger docs and match snapshot >
     "ReportBusinessCommissionItemVO",
     "IPageReportBusinessCommissionEmployeeVO",
     "RIPageReportBusinessCommissionEmployeeVO",
+    "IPageReportBusinessCommissionDetailVO",
+    "RIPageReportBusinessCommissionDetailVO",
     "ReportBusinessQO",
     "RReportBusinessVO",
     "ReportBusinessRankVO",
@@ -6487,6 +6551,7 @@ exports[`integration Tests > should fetch real swagger docs and match snapshot >
     "/reportBusiness/commissionItemList",
     "/reportBusiness/commissionExportPage",
     "/reportBusiness/commissionEmployeePage",
+    "/reportBusiness/commissionEmployeeDetailPage",
     "/reportBusiness/analysis",
     "/pullSalesPerformanceRankInfo",
     "/pullRevenueCustomerData",
@@ -7188,6 +7253,37 @@ exports[`integration Tests > should fetch real swagger docs and match snapshot >
         },
       },
       "summary": "商机计提",
+      "tags": [
+        "商机漏斗",
+      ],
+    },
+  },
+  "/reportBusiness/commissionEmployeeDetailPage": {
+    "post": {
+      "operationId": "commissionEmployeeDetailPage",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ReportBusinessCommissionDetailPageQO",
+            },
+          },
+        },
+        "required": true,
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/RIPageReportBusinessCommissionDetailVO",
+              },
+            },
+          },
+          "description": "OK",
+        },
+      },
+      "summary": "员工明细",
       "tags": [
         "商机漏斗",
       ],
@@ -10327,6 +10423,37 @@ exports[`integration Tests > should handle custom response transformation and ma
         },
       },
       "summary": "商机计提",
+      "tags": [
+        "商机漏斗",
+      ],
+    },
+  },
+  "/reportBusiness/commissionEmployeeDetailPage": {
+    "post": {
+      "operationId": "commissionEmployeeDetailPage",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ReportBusinessCommissionDetailPageQO",
+            },
+          },
+        },
+        "required": true,
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/RIPageReportBusinessCommissionDetailVO",
+              },
+            },
+          },
+          "description": "OK",
+        },
+      },
+      "summary": "员工明细",
       "tags": [
         "商机漏斗",
       ],

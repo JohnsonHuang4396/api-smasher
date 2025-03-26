@@ -18,6 +18,12 @@ export default antfu(
     ]
   },
   {
+    files: ['packages/core/test/**/*.ts'],
+    rules: {
+      'antfu/no-import-dist': 'off'
+    }
+  },
+  {
     files: ['playground/**/*.ts'],
     rules: {
       'ts/ban-ts-comment': 'off',

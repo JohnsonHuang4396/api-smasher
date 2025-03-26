@@ -5,7 +5,7 @@ import { existsSync, mkdirSync } from 'node:fs'
 import process from 'node:process'
 import { confirm, intro, outro, select, spinner, text } from '@clack/prompts'
 import { normalize, resolve } from 'pathe'
-import { DEFAULT_API_TEMPLATE_PATH, DEFAULT_OUTPUT_DIR } from './config'
+import { DEFAULT_OUTPUT_DIR, DEFAULT_WEB_REQUEST_TEMPLATE_PATH } from './config'
 
 export interface PromptConfig {
   responses: SwaggerResponse[]
@@ -135,7 +135,7 @@ export async function promptUserInteraction({
             hint: template.path
           }
         }) || []),
-        { value: DEFAULT_API_TEMPLATE_PATH, label: 'default-web-fetch' },
+        { value: DEFAULT_WEB_REQUEST_TEMPLATE_PATH, label: 'default-web-fetch' },
         { value: 'custom', label: 'Custom' }
       ]
     }) as string

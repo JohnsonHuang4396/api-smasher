@@ -11,6 +11,6 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   async onSuccess() {
-    execSync('cp -r ./src/generator/template/* ./dist/generator/template')
+    execSync('cp -r ./src/template ./dist')
   }
 })

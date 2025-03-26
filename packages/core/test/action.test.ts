@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { generateApi } from '../src/action'
+import { generateApi } from '../dist'
 
 const REAL_SWAGGER_URL = 'http://192.168.100.125:18083/v3/api-docs'
 const TEST_OUTPUT_DIR = './test/test-output/api'
