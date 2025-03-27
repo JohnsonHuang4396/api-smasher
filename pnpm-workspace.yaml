@@ -7,7 +7,7 @@ catalog:
   '@antfu/ni': ^24.3.0
   '@iconify-json/svg-spinners': ^1.2.2
   '@shikijs/vitepress-twoslash': ^3.2.1
-  '@types/node': ^22.13.13
+  '@types/node': ^22.13.14
   '@unocss/reset': ^66.0.0
   '@vueuse/core': ^13.0.0
   bumpp: ^10.1.0
