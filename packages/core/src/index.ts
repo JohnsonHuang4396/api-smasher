@@ -1,4 +1,6 @@
 export * from './action'
+export * from './config'
+export * from './context'
 export * from './fetch-api'
 export * from './generator'
 export * from './prompt'

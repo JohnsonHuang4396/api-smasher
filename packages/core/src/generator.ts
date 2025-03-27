@@ -3,7 +3,7 @@ import type { SwaggerPathDefinition, SwaggerResponse, SwaggerSchemaDefinition } 
 import { appendFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { cwd } from 'node:process'
 import { renderFile } from 'ejs'
-import { dirname, join, normalize, resolve } from 'pathe'
+import { normalize, resolve } from 'pathe'
 import { DEFAULT_API_OUTPUT_DIR, DEFAULT_MODEL_OUTPUT_DIR, DEFAULT_WEB_REQUEST_TEMPLATE_PATH } from './config'
 
 export interface GeneratorOptions {
@@ -64,8 +64,8 @@ export async function generateApiContent(
 ): Promise<string> {
   try {
     const templatePath = normalize(
-      options.template || join(dirname(import.meta.url), DEFAULT_WEB_REQUEST_TEMPLATE_PATH)
-    ).replace('file:', '')
+      options.template || DEFAULT_WEB_REQUEST_TEMPLATE_PATH
+    )
 
     const result = await renderFile(templatePath, {
       pathDetails

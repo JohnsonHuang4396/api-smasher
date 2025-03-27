@@ -2,9 +2,15 @@ import type { GeneratorOptions } from './generator'
 import type { SwaggerConfig, SwaggerResponse } from './types'
 import { select } from '@clack/prompts'
 import { DEFAULT_API_OUTPUT_DIR, DEFAULT_MODEL_OUTPUT_DIR, DEFAULT_OUTPUT_DIR } from './config'
+import { createGeneratorContext, getGeneratorContext } from './context'
 import { fetchSwaggerDocs } from './fetch-api'
 import { generateApiFiles } from './generator'
 import { promptUserInteraction } from './prompt'
+
+export type Template = string | {
+  name: string
+  path: string
+}
 
 export interface ActionOptions {
   /**
@@ -55,7 +61,7 @@ export interface ActionOptions {
       /**
        * 模板路径
        */
-      template?: string[] | { name: string, path: string }[]
+      template?: Template[]
     }
   }
 }
@@ -77,10 +83,10 @@ export async function generateApi({
   }
 }: ActionOptions): Promise<void> {
   try {
-    // 1. 获取 Swagger 文档
     const responses = await fetchSwaggerDocs(config)
 
-    // 2. 如果不是自动运行，则进行用户交互
+    createGeneratorContext({ config, outputDir, selectedPaths, generateConfig }, responses)
+
     if (!autoRun) {
       const result = await promptUserInteraction({
         responses,
@@ -93,15 +99,12 @@ export async function generateApi({
       return await processApiGeneration(responses, result)
     }
 
-    // 3. 自动运行模式
     const availablePaths = extractAvailablePaths(responses)
 
-    // 验证选择的路径是否有效
     const validPaths = validateSelectedPaths(selectedPaths, availablePaths)
     if (validPaths.length === 0)
       throw new Error('❌ No valid API paths selected')
 
-    // 4. 生成文件
     return await processApiGeneration(responses, {
       outputDir,
       selectedPaths: validPaths,
@@ -125,7 +128,7 @@ interface ProcessResult {
   generateConfig: ActionOptions['generateConfig']
 }
 
-async function processApiGeneration(
+export async function processApiGeneration(
   responses: SwaggerResponse[],
   result: ProcessResult
 ): Promise<void> {
@@ -135,7 +138,7 @@ async function processApiGeneration(
     if (Array.isArray(generateConfig?.api?.template) && generateConfig.api.template.length > 1) {
       template = await select({
         message: 'Select the API template',
-        options: generateConfig.api.template.map((template) => {
+        options: getGeneratorContext().templates.map((template) => {
           if (typeof template === 'string') {
             return {
               value: template,
@@ -167,7 +170,7 @@ async function processApiGeneration(
   }
 }
 
-function extractAvailablePaths(responses: SwaggerResponse[]): Array<ProcessResult['pathDetails'][number]> {
+export function extractAvailablePaths(responses: SwaggerResponse[]): Array<ProcessResult['pathDetails'][number]> {
   return responses.flatMap(response =>
     Object.entries(response.paths || {}).flatMap(([path, methods]) =>
       Object.entries(methods as Record<string, any>).map(([method, info]) => {
@@ -184,7 +187,7 @@ function extractAvailablePaths(responses: SwaggerResponse[]): Array<ProcessResul
   )
 }
 
-function validateSelectedPaths(
+export function validateSelectedPaths(
   selectedPaths: string[],
   availablePaths: Array<{ method: string, path: string }>
 ): string[] {

@@ -5,7 +5,8 @@ import { existsSync, mkdirSync } from 'node:fs'
 import process from 'node:process'
 import { confirm, intro, outro, select, spinner, text } from '@clack/prompts'
 import { normalize, resolve } from 'pathe'
-import { DEFAULT_OUTPUT_DIR, DEFAULT_WEB_REQUEST_TEMPLATE_PATH } from './config'
+import { DEFAULT_OUTPUT_DIR } from './config'
+import { getGeneratorContext } from './context'
 
 export interface PromptConfig {
   responses: SwaggerResponse[]
@@ -122,7 +123,7 @@ export async function promptUserInteraction({
     apiTemplatePath = await select({
       message: 'Do you want to use a custom API template?',
       options: [
-        ...(actionOptions.generateConfig?.api?.template?.map((template) => {
+        ...(getGeneratorContext().templates.map((template) => {
           if (typeof template === 'string') {
             return {
               value: template,
@@ -135,7 +136,6 @@ export async function promptUserInteraction({
             hint: template.path
           }
         }) || []),
-        { value: DEFAULT_WEB_REQUEST_TEMPLATE_PATH, label: 'default-web-fetch' },
         { value: 'custom', label: 'Custom' }
       ]
     }) as string
