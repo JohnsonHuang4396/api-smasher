@@ -23,18 +23,19 @@
     "dist"
   ],
   "scripts": {
-    "dev": "nr stub && vite src/client",
+    "dev": "nr stub && nr dev:client",
     "dev:client": "vite build src/client --watch",
     "stub": "unbuild --stub",
     "build": "rimraf dist && pnpm run --sequential /^build:/",
-    "build:client": "vite build src/client",
-    "build:js": "unbuild"
+    "build:js": "unbuild",
+    "build:client": "vite build src/client"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0"
   },
   "dependencies": {
     "@johnsonhuang4396/api-smasher": "workspace:*",
+    "@tanstack/vue-query": "^5.69.0",
     "@vueuse/core": "catalog:",
     "vue": "catalog:",
     "vue-router": "^4.5.0"
@@ -43,13 +44,19 @@
     "@iconify/json": "^2.2.320",
     "@types/node": "catalog:",
     "@vitejs/plugin-vue": "^5.2.3",
+    "ansis": "^3.17.0",
     "codemirror-theme-vars": "^0.1.2",
+    "naive-ui": "^2.41.0",
+    "sirv": "^3.0.1",
     "typescript": "catalog:",
     "unbuild": "catalog:",
     "unocss": "catalog:",
     "unplugin-auto-import": "^19.1.1",
     "unplugin-vue-components": "catalog:",
     "unplugin-vue-router": "^0.12.0",
-    "vite": "catalog:"
+    "vfonts": "^0.0.3",
+    "vite": "catalog:",
+    "vite-dev-rpc": "^1.0.7",
+    "vite-hot-client": "^2.0.4"
   }
 }

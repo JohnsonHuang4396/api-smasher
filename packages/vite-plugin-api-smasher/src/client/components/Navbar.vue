@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { refreshSwaggerDocs } from '../api/swagger'
 import { toggleDark } from '../logic'
+
+const historyDrawerRef = useTemplateRef('historyDrawerRef')
+
+const { refetch, isRefetching } = useQuery({
+  queryKey: ['swagger'],
+  queryFn: refreshSwaggerDocs,
+  refetchOnWindowFocus: false,
+  enabled: false
+})
+
+const debouncedRefetch = useDebounceFn(refetch, 1000)
+
+function onShow() {
+  historyDrawerRef.value?.onShow()
+}
 </script>
 
 <template>
@@ -13,8 +29,32 @@ import { toggleDark } from '../logic'
     >
       <div i-carbon-logo-github />
     </a>
-    <button class="text-lg icon-btn" title="Toggle Dark Mode" @click="toggleDark()">
+
+    <n-tooltip>
+      <template #trigger>
+        <n-button @click="debouncedRefetch()" :loading="isRefetching">
+          <span i-humbleicons-refresh />
+        </n-button>
+      </template>
+      <span>
+        Refresh
+      </span>
+    </n-tooltip>
+
+    <n-tooltip>
+      <template #trigger>
+        <n-button @click="onShow()">
+          <span i-material-symbols-history />
+        </n-button>
+      </template>
+      <span>
+        History Records
+      </span>
+    </n-tooltip>
+
+    <n-button @click="toggleDark()">
       <span i-carbon-sun dark:i-carbon-moon />
-    </button>
+    </n-button>
   </nav>
+  <HistoryDrawer ref="historyDrawerRef" />
 </template>

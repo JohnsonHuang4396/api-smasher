@@ -1,81 +1,49 @@
 import type { PromptActionOptions } from '@johnsonhuang4396/api-smasher'
 import type { Plugin } from 'vite'
-import { resolve } from 'node:path'
-import { createServer } from './server'
+import c from 'ansis'
+import sirv from 'sirv'
+import { DIR_CLIENT } from './dir'
+import { createServer } from './node/server'
 
 export interface VitePluginApiSmasherOptions extends PromptActionOptions {
-  /**
-   * 启动端口，默认为8848
-   */
-  port?: string
 }
 
 export default function ApiSmasher(options: VitePluginApiSmasherOptions): Plugin {
-  const port = options.port || '8848'
-  let server: ReturnType<typeof createServer>
-
   return {
     name: 'vite-plugin-api-smasher',
     apply: 'serve',
     configureServer(vite) {
-      // 启动 API Smasher 服务器
-      server = createServer(options)
-      server.listen(Number.parseInt(port))
-      vite.resolvedUrls = {
-        local: [`http://localhost:${port}`],
-        network: []
-      }
+      const { config } = vite
+      const base = config.base ?? '/'
 
-      // 注册静态资源路由
-      vite.middlewares.use('/api-smasher', (req, res, next) => {
-        if (req.url === '/') {
-          res.setHeader('Content-Type', 'text/html')
-          res.end(
-            `<!DOCTYPE html>
-            <html>
-              <head>
-                <title>API Smasher</title>
-                <script type="module" src="/api-smasher/client.js"></script>
-              </head>
-              <body>
-                <div id="app"></div>
-              </body>
-            </html>`
-          )
-          return
+      createServer(vite, options)
+
+      vite.middlewares.use(`${base}__api-smasher`, sirv(DIR_CLIENT, {
+        single: true,
+        dev: true
+      }))
+
+      const _printUrls = vite.printUrls
+      vite.printUrls = () => {
+        let host = `${config.server.https ? 'https' : 'http'}://localhost:${config.server.port || '80'}`
+
+        const url = vite.resolvedUrls?.local[0]
+
+        if (url) {
+          try {
+            const u = new URL(url)
+            host = `${u.protocol}//${u.host}`
+          }
+          catch (error) {
+            config.logger.warn(`Parse resolved url failed: ${error}`)
+          }
         }
-        next()
-      })
-    },
-    configurePreviewServer(preview) {
-      preview.middlewares.use('/api-smasher', (req, res, next) => {
-        if (req.url === '/') {
-          res.setHeader('Content-Type', 'text/html')
-          res.end(
-            `<!DOCTYPE html>
-            <html>
-              <head>
-                <title>API Smasher</title>
-                <script type="module" src="/api-smasher/client.js"></script>
-              </head>
-              <body>
-                <div id="app"></div>
-              </body>
-            </html>`
-          )
-          return
-        }
-        next()
-      })
-    },
-    resolveId(id) {
-      if (id === '/api-smasher/client.js') {
-        return resolve(__dirname, 'client.js')
-      }
-    },
-    closeBundle() {
-      if (server) {
-        server.close()
+
+        _printUrls()
+
+        const colorUrl = (url: string) => c.blue(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
+
+        config.logger.info(`  ${c.blue('➜')}  ${c.bold('Api-Smasher')}: ${colorUrl(`${host}${base}__api-smasher/`)}`)
       }
     }
   }
