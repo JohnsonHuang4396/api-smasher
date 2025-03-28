@@ -1,7 +1,7 @@
 {
   "name": "@johnsonhuang4396/api-smasher",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Convert Swagger documentation to TypeScript API files",
   "author": "Johnson Huang",
   "license": "MIT",
