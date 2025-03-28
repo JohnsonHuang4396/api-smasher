@@ -30,3 +30,5 @@ export default defineConfig({
 ```
 
 then run `npm run dev` and visit [localhost:3000/__api-smasher/](localhost:3000/__api-smasher/) to generate API and type files.
+
+![preview](/packages/vite-plugin-api-smasher/public/website.png)
