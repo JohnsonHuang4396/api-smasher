@@ -1,34 +1,35 @@
-# pkg-placeholder
+# Api Smasher
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
-[![License][license-src]][license-href]
+[![npm version](https://img.shields.io/npm/v/@johnsonhuang4396/api-smasher)](https://www.npmjs.com/package/@johnsonhuang4396/api-smasher)
+[![jsDocs.io](https://img.shields.io/badge/jsDocs.io-reference-blue)](https://www.jsdocs.io/package/@johnsonhuang4396/api-smasher)
+[![github release](https://img.shields.io/github/v/release/JohnsonHuang4396/api-smasher)](https://github.com/JohnsonHuang4396/api-smasher/releases)
+![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40johnsonhuang4396%2Fapi-smasher)
+![NPM License](https://img.shields.io/npm/l/%40johnsonhuang4396%2Fapi-smasher)
 
-_description_
+_Convert Swagger documentation to TypeScript API files (Support custom template)_
 
-## Sponsors
+## Install
+```bash
+npm i @johnsonhuang4396/api-smasher
+```
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
+## How to use
+```ts
+import { generateApi } from '@johnsonhuang4396/api-smasher'
 
-## License
+generateApi({
+  config: 'YOUR_SWAGGER_REMOTE_URL',
+  autoRun: true,
+  outputDir: 'YOUR_OUTPUT_DIR',
+  selectedPaths: [API_PATHS_YOU_WANT]
+})
+```
+then you will find `Api.ts` and `Model.ts` file be generated at **YOUR_OUTPUT_DIR**
 
-[MIT](./LICENSE) License © [Anthony Fu](https://github.com/antfu)
+## More usage ways
 
-<!-- Badges -->
+Find it [HERE](https://github.com/JohnsonHuang4396/api-smasher/tree/main/packages/core/test)
 
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+## Types
+
+Find it [HERE](https://github.com/JohnsonHuang4396/api-smasher/blob/main/packages/core/src/action.ts)
