@@ -2,6 +2,17 @@
   "type": "module",
   "version": "0.0.3",
   "packageManager": "pnpm@10.7.0",
+  "author": "Johnson Huang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnsonhuang4396/api-smasher.git"
+  },
+  "keywords": [
+    "swagger",
+    "typescript",
+    "vite-plugin"
+  ],
   "scripts": {
     "build": "nr -r build",
     "dev": "nr -r dev",
