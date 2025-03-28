@@ -7,7 +7,9 @@ export default defineBuildConfig({
   clean: true,
   declaration: 'compatible',
   externals: [
-    'vite'
+    'vite',
+    'ansis',
+    'sirv'
   ],
   rollup: {
     dts: {

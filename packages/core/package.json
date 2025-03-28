@@ -20,7 +20,10 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*/": {
-      "*/": ["dist/index.d.ts"]
+      "*/": [
+        "dist/index.d.ts",
+        "dist/index.d.mts"
+      ]
     }
   },
   "files": [

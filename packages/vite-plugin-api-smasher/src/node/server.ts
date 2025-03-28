@@ -87,8 +87,4 @@ export function createServer(server: ViteDevServer, options: VitePluginApiSmashe
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify({ success: true }))
   })
-
-  server.middlewares.use(`${base}api-smasher/dir`, async () => {
-
-  })
 }

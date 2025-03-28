@@ -19,7 +19,7 @@ export interface GeneratorOptions {
   generateConfig: ActionOptions['generateConfig'] & ApiGeneratorOptions
 }
 
-function generateFile(outputDir: string, path: string, content: string): void {
+export function generateFile(outputDir: string, path: string, content: string): void {
   if (existsSync(path)) {
     appendFileSync(path, `\n\n${content}`)
   }
@@ -83,7 +83,7 @@ export async function generateApiContent(
   }
 }
 
-function getTypeFromSchema(prop: any): string {
+export function getTypeFromSchema(prop: any): string {
   if (prop.$ref) {
     return prop.$ref?.split('/')?.pop() ?? 'any'
   }
@@ -122,7 +122,7 @@ export function getBodyType(method: any, result: string[]): string[] {
   return result
 }
 
-function getResponseType(method: any, result: string[]): string[] {
+export function getResponseType(method: any, result: string[]): string[] {
   const schema = method?.responses?.['200']?.content?.['*/*']?.schema
   if (!schema || !schema.$ref)
     return result
@@ -130,7 +130,7 @@ function getResponseType(method: any, result: string[]): string[] {
   return result
 }
 
-function getPropertyDefinition(
+export function getPropertyDefinition(
   name: string,
   type: string,
   optional: string
