@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "packageManager": "pnpm@10.7.0",
   "scripts": {
     "build": "nr -r build",
