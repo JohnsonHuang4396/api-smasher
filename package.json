@@ -19,7 +19,6 @@
     "lint": "eslint --cache .",
     "docs": "pnpm -C docs run docs:dev",
     "docs:build": "pnpm -C docs run docs:build",
-    "prepublishOnly": "pnpm build",
     "release": "bumpp -r",
     "test": "vitest -u",
     "typecheck": "tsc --noEmit",
