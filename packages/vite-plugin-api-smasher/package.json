@@ -5,12 +5,12 @@
   "description": "Vite plugin for API Smasher",
   "author": "Johnson Huang",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnsonhuang4396/api-smasher.git"
+  },
   "keywords": [
-    "vite-plugin",
-    "swagger",
-    "typescript",
-    "api",
-    "generator"
+    "vite-plugin"
   ],
   "exports": {
     ".": "./dist/index.mjs",
