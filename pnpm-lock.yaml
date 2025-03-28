@@ -275,8 +275,8 @@ importers:
   playground:
     devDependencies:
       '@johnsonhuang4396/vite-plugin-api-smasher':
-        specifier: workspace:*
-        version: link:../packages/vite-plugin-api-smasher
+        specifier: ^0.1.1
+        version: 0.1.1(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0))
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -926,6 +926,14 @@ packages:
   '@istanbuljs/schema@0.1.3':
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
+
+  '@johnsonhuang4396/api-smasher@0.1.1':
+    resolution: {integrity: sha512-yjgs28AjzI20jvDDTM+L5SxMRjYzt2qpITM+PnF2qKLbkXjet9b/Q/hZ/Ss6DOTEe+UTheZpHw1rAroXDPVo2w==}
+
+  '@johnsonhuang4396/vite-plugin-api-smasher@0.1.1':
+    resolution: {integrity: sha512-tUsMvbnz1zJ0yA4iqucJQxKjTEfGTP9xm/p0PCUDPSMb9+VBg6Y5993cQdzcSyY0Vxb3+BirDEFM12q+TqDFBg==}
+    peerDependencies:
+      vite: ^4.0.0 || ^5.0.0
 
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
@@ -4640,6 +4648,25 @@ snapshots:
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
   '@istanbuljs/schema@0.1.3': {}
+
+  '@johnsonhuang4396/api-smasher@0.1.1':
+    dependencies:
+      '@clack/prompts': 0.10.0
+      ejs: 3.1.10
+      pathe: 2.0.3
+      typescript: 5.8.2
+
+  '@johnsonhuang4396/vite-plugin-api-smasher@0.1.1(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0))':
+    dependencies:
+      '@johnsonhuang4396/api-smasher': 0.1.1
+      '@tanstack/vue-query': 5.69.0(vue@3.5.13(typescript@5.8.2))
+      '@vueuse/core': 13.0.0(vue@3.5.13(typescript@5.8.2))
+      vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.0)
+      vue: 3.5.13(typescript@5.8.2)
+      vue-router: 4.5.0(vue@3.5.13(typescript@5.8.2))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
 
   '@jridgewell/gen-mapping@0.3.8':
     dependencies:

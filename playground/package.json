@@ -10,7 +10,7 @@
     "dev": "vite"
   },
   "devDependencies": {
-    "@johnsonhuang4396/vite-plugin-api-smasher": "workspace:*",
+    "@johnsonhuang4396/vite-plugin-api-smasher": "^0.1.1",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-inspect": "^11.0.0"
